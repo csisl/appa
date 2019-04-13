@@ -54,7 +54,7 @@ if __name__ == "__main__":
 	debug = False
 	report = False
 
-	parser = argparse.ArgumentParser(description="Description of project")
+	parser = argparse.ArgumentParser(description="Interactive steganography")
 
 	parser.add_argument("message",
 			help="Message to inject in the image")
@@ -74,5 +74,5 @@ if __name__ == "__main__":
 
 	image = get_image(args.image)
 	pixel_count = len(args.message) * 3
-	get_pixels(len(args.message)*3, image)
+	pixels = get_pixels(pixel_count, image)
 	binary_msg = binary_conversion(args.message)
