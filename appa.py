@@ -55,6 +55,7 @@ def get_binary_string(msg):
 	for bin_string in bin_list:
 		print("\t{}".format(bin_string))
 	binary_msg = ''.join(bin_list)
+	print()
 	return binary_msg
 
 
@@ -64,7 +65,6 @@ def get_pixels(pixel_count, image):
 	pixels = list(image.getdata())[0:pixel_count]
 	if debug: print_status("PIXELS TO BE MODIFIED:\n", pixels)
 	print("==> Pixel data")
-	print("\tPixels to be modified:\n{}\n".format(pixels))
 	return pixels
 
 
@@ -166,9 +166,9 @@ def mod_bitmap(bitmap, bstring):
 			print(bitmap[x][0])
 			print(bitmap[x][1])
 			print(bitmap[x][2])
-	
-	return bitmap
 
+	print()
+	return bitmap
 
 
 def is_even(num):
@@ -176,6 +176,23 @@ def is_even(num):
 		return True
 	else:
 		return False
+
+
+def inject_bitmap(bitmap, img):
+	width = img.size[0]
+	(x, y) = (0, 0)
+	for pixel in bitmap:
+		img.putpixel((x, y), tuple(pixel))
+		if x == width-1:
+			x=0
+			y+=1
+		else:
+			x+=1
+	pixels = get_pixels(len(bitmap), img)
+	print("\tPixels after bitmap injection:")
+	print("{}".format(pixels))
+	print()
+	return img
 
 
 # Purpose:	print the status to the screen when in debug mode 
@@ -198,23 +215,41 @@ if __name__ == "__main__":
 			help="Message to inject in the image")
 	parser.add_argument("image",
 			help="Image to inject a message into")
-	parser.add_argument("-d", "--debug", action="store_true",
+	parser.add_argument("-db", "--debug", action="store_true",
 			help="Debug mode")
+	parser.add_argument("-e", "--encode", action="store_true",
+			help="Encode image")
+	parser.add_argument("-d", "--decode", action="store_true",
+			help="Decode image")
 
 	args = parser.parse_args()
+
+	if not args.encode and not args.decode:
+		print("Choose to either encode or decode image")
+		sys.exit()
 
 	if args.debug:
 		debug = True
 
-	image = get_image(args.image)
+	if args.encode:
+		print("==> Encoding image: {}\n".format(args.image))
+		image = get_image(args.image)
 
-	if not text_fits(args.message, image):
-		print("Message too large for image. Please find a bigger image")
-		sys.exit()
+		if not text_fits(args.message, image):
+			print("Message too large for image. Please find a bigger image")
+			sys.exit()
 
-	pixel_count = len(args.message)*3
-	pixels = get_pixels(pixel_count, image)
-	bstring = get_binary_string(args.message)
-	bitmap = get_bitmaps(pixels)
-	mod_bitmap(bitmap, bstring)
+		pixel_count = len(args.message)*3
 
+		pixels = get_pixels(pixel_count, image)
+		print("\tPixels to be modified:\n{}\n".format(pixels))
+
+		bstring = get_binary_string(args.message)
+		bitmap = get_bitmaps(pixels)
+		new_bitmap = mod_bitmap(bitmap, bstring)
+		new_img = inject_bitmap(new_bitmap, image)
+		fname = args.image.split('.')
+		print("==> Saving new image")
+		new_image_name = fname[0] + "_new" + ".png"
+		print("\tModified image: {}".format(new_image_name))
+		new_img.save(new_image_name)
