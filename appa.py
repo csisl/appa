@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import argparse
 import sys
+import binascii
 from PIL import Image, ImageMath
 
 # COLOR CODES
@@ -195,6 +196,45 @@ def inject_bitmap(bitmap, img):
 	return img
 
 
+def decode(img):
+	pixels = get_pixels(get_pixel_count(img), img)
+	print("\tFirst 3 pixels/possible text: {}".format(pixels[0:3]))
+	if is_even(pixels[2][2]):
+		i=2
+		while is_even(pixels[i][2]):
+			print("\tPossible text found at pixels[{}]".format(pixels[i]))
+			i+=3
+		print()
+		bstring = translate_pixels(pixels[0:i+1])
+		translate_from_binary(bstring)
+	return
+
+
+def translate_pixels(bitmap):
+	bstring = ""
+	i = 0
+	print("==> Translating each pixel for possible text")
+	print("\t{}".format(bitmap))
+	for byte in bitmap:
+		for b in byte:
+			if int(b)%2 == 0:
+				bstring+="0"
+			else:
+				bstring+="1"
+			i+=1
+	
+	return bstring
+
+
+def translate_from_binary(bstring):
+	for b in range(0, len(bstring),9):
+		print("\t{}".format(bstring[b:b+8]), end=" = ")
+		st = chr(int(bstring[b:b+8],2))
+		print(st)
+	print()
+	return
+
+
 # Purpose:	print the status to the screen when in debug mode 
 #			with fancy formatting that now doesn't have to be copied & pasted a ton
 def print_status(message, value):
@@ -211,16 +251,14 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser(description="Interactive steganography")
 
-	parser.add_argument("message",
-			help="Message to inject in the image")
 	parser.add_argument("image",
-			help="Image to inject a message into")
-	parser.add_argument("-db", "--debug", action="store_true",
-			help="Debug mode")
-	parser.add_argument("-e", "--encode", action="store_true",
-			help="Encode image")
+			help="Image to inject a message into or decode")
+	parser.add_argument("-e", "--encode", 
+			help="Encode image with text [encode]")
 	parser.add_argument("-d", "--decode", action="store_true",
 			help="Decode image")
+	parser.add_argument("-db", "--debug", action="store_true",
+			help="Debug mode")
 
 	args = parser.parse_args()
 
@@ -235,16 +273,16 @@ if __name__ == "__main__":
 		print("==> Encoding image: {}\n".format(args.image))
 		image = get_image(args.image)
 
-		if not text_fits(args.message, image):
+		if not text_fits(args.encode, image):
 			print("Message too large for image. Please find a bigger image")
 			sys.exit()
 
-		pixel_count = len(args.message)*3
+		pixel_count = len(args.encode)*3
 
 		pixels = get_pixels(pixel_count, image)
 		print("\tPixels to be modified:\n{}\n".format(pixels))
 
-		bstring = get_binary_string(args.message)
+		bstring = get_binary_string(args.encode)
 		bitmap = get_bitmaps(pixels)
 		new_bitmap = mod_bitmap(bitmap, bstring)
 		new_img = inject_bitmap(new_bitmap, image)
@@ -253,3 +291,8 @@ if __name__ == "__main__":
 		new_image_name = fname[0] + "_new" + ".png"
 		print("\tModified image: {}".format(new_image_name))
 		new_img.save(new_image_name)
+
+	if args.decode:
+		print("==> Decoding image: {}\n".format(args.decode))
+		image = get_image(args.image)
+		decode(image)
