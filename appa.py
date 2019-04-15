@@ -27,10 +27,9 @@ def get_image(img):
 def text_fits(message, image):
 	image_size = get_pixel_count(image)
 	if len(message)*3 > image_size:
-		if debug:
-			print(CRED + "[!] Image not large enough for the message!" + CRESET)
-			print("Image size: {}".format(image_size))
-			print("Pixels needed for message: {}".format(len(message*3)))
+		print(CRED + "[!] Image not large enough for the message!" + CRESET)
+		print("Image size: {}".format(image_size))
+		print("Pixels needed for message: {}".format(len(message*3)))
 		return False
 	else:			
 		print("==> Image data")
