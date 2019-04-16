@@ -121,14 +121,20 @@ def mod_bitmap(bitmap, bstring):
 				if is_even(bitmap[x][p]):
 					print("{}".format(bitmap[x][p]), end=", ")
 				else:
-					bitmap[x][p] -= 1
+					if bitmap[x][p] == 0:
+						bitmap[x][p]+=1
+					else:
+						bitmap[x][p] -= 1
 					print(CGREEN + "{}".format(bitmap[x][p]) + CRESET, end=", ")
 				if debug:
 					print("Needs to be even ", end=", ")
 					print(bitmap[x][p])
 			else:
 				if is_even(bitmap[x][p]):
-					bitmap[x][p] -= 1
+					if bitmap[x][p] == 0:
+						bitmap[x][p] += 1
+					else:
+						bitmap[x][p] -= 1
 					print(CGREEN + "{}".format(bitmap[x][p]) + CRESET, end=", ")
 				else:
 					print("{}".format(bitmap[x][p]), end=", ")
