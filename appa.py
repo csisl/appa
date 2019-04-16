@@ -146,14 +146,20 @@ def mod_bitmap(bitmap, bstring):
 			if x == len(bitmap)-1:
 				# change to odd to terminate changes
 				if is_even(bitmap[x][2]):
-					bitmap[x][2]-=1
+					if bitmap[x][2] == 0:
+						bitmap[x][2]+=1
+					else:
+						bitmap[x][2]-=1
 					print(CGREEN + "{}".format(bitmap[x][2]) + CRESET + ")")
 				else:
 					print("{})".format(bitmap[x][2]))
 			elif is_even(bitmap[x][2]):
 				print("{})".format(bitmap[x][2]))
 			else:
-				bitmap[x][2]-=1
+				if bitmap[x][2] == 0:
+					bitmap[x][2]+=1
+				else:
+					bitmap[x][2]-=1
 				print(CGREEN + "{}".format(bitmap[x][2]) + CRESET + ")")
 			end_pixel_list = 0
 		else:
@@ -205,8 +211,8 @@ def decode(img):
 			i+=3
 		print()
 		bstring = translate_pixels(pixels[0:i+1])
-		translate_from_binary(bstring)
-	return
+		string = translate_from_binary(bstring)
+	return string
 
 
 def translate_pixels(bitmap):
@@ -226,12 +232,23 @@ def translate_pixels(bitmap):
 
 
 def translate_from_binary(bstring):
+	string=""
 	for b in range(0, len(bstring),9):
 		print("\t{}".format(bstring[b:b+8]), end=" = ")
 		st = chr(int(bstring[b:b+8],2))
 		print(st)
+		string+=st
 	print()
-	return
+	return string
+
+
+def save_string(string, image_name):
+	fname = image_name.split('.')
+	output_file = fname[0] + ".results"
+	f = open(output_file, "w+")
+	f.write(string)
+	f.close()
+	return output_file
 
 
 # Purpose:	print the status to the screen when in debug mode 
@@ -294,4 +311,10 @@ if __name__ == "__main__":
 	if args.decode:
 		print("==> Decoding image: {}\n".format(args.decode))
 		image = get_image(args.image)
-		decode(image)
+		string = decode(image)
+		if len(string) > 10000:
+			output_file = save_string(string, args.image)
+			print("Appa found an extremely large string in the image. To save your console, results are saved to file: {}".format(output_file))
+			print("String length: {}".format(len(string)))
+		else:
+			print("{}".format(string))
