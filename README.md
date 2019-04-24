@@ -36,6 +36,10 @@ So if our image had the following arrangement for the first 3 pixels
 
 we could inject "A" by changing the things in bold by subtracting 1 from it. Notice letters are 8 bit, but we are dealing with every 9 values for the pixel. Recall that the last bit is set to via the step 3 from above.
 
+You can map the bits from A to the pixels as follows:
+
+![alt text](https://github.com/stncal/appa/blob/master/encoding.jpg)
+
 ### decoding 
 
 Decoding should now be pretty trivial. If we look at the steps above we can possibly extract some text by reversing the algorithm. Appa reads up to the first 9th value in a set of pixels that is odd and then begins to attempt decoding. It will figure out what binary data is represented by these pixels by knowing all even numbers represent a 0 and all odd numbers represent a 1, then translating that to it's correct ASCII value. 
