@@ -210,7 +210,6 @@ def inject_bitmap(bitmap, img):
 def decode(img):
 	pixels = get_pixels(get_pixel_count(img), img)
 	print("\tFirst 3 pixels/possible text: {}".format(pixels[0:3]))
-	print("{}".format(pixels[200:600]))
 	if is_even(pixels[2][2]):
 		i=2
 		while is_even(pixels[i][2]):
@@ -230,7 +229,6 @@ def decode(img):
 		print()
 		bstring = translate_pixels(pixels[0:i+1])
 		string = translate_from_binary(bstring)
-			
 	return string
 
 
@@ -331,7 +329,7 @@ if __name__ == "__main__":
 		print("==> Decoding image: {}\n".format(args.decode))
 		image = get_image(args.image)
 		string = decode(image)
-		if len(string) > 10000:
+		if len(string) > 10:
 			output_file = save_string(string, args.image)
 			print("Appa found an extremely large string in the image. To save your console, results are saved to file: {}".format(output_file))
 			print("String length: {}".format(len(string)))
