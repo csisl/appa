@@ -210,6 +210,7 @@ def inject_bitmap(bitmap, img):
 def decode(img):
 	pixels = get_pixels(get_pixel_count(img), img)
 	print("\tFirst 3 pixels/possible text: {}".format(pixels[0:3]))
+	print("{}".format(pixels[200:600]))
 	if is_even(pixels[2][2]):
 		i=2
 		while is_even(pixels[i][2]):
@@ -218,6 +219,18 @@ def decode(img):
 		print()
 		bstring = translate_pixels(pixels[0:i+1])
 		string = translate_from_binary(bstring)
+	else:
+		i=2
+		while not is_even(pixels[i][2]):
+			i+=3
+		print("possible data found at pixels[{}][2]".format(i))
+		while is_even(pixels[i][2]):
+			#print("\tPossible text found at pixels[{}]".format(i))
+			i+=3
+		print()
+		bstring = translate_pixels(pixels[0:i+1])
+		string = translate_from_binary(bstring)
+			
 	return string
 
 
