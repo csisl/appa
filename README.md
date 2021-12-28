@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/stncal/appa/blob/master/avatar_appa.png)
 
-Appa is an educational steganography tool aimed at teaching the user how steganography works by outputting changes made to an image as binary data is injected into it. This was completed at UTSA's 2019 RowdyHacks.
+Appa is an educational steganography tool aimed at teaching the user how steganography works by outputting changes made to an image as binary data is injected into it. This was completed at a hackathon in 2019.
 
 ### prereqs
 
